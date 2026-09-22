@@ -2,6 +2,8 @@ import { defineCollection } from 'astro:content';
 import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 
+import { productSchema } from '~/lib/schema/product';
+
 const metadataDefinition = () =>
   z
     .object({
@@ -68,6 +70,15 @@ const postCollection = defineCollection({
   }),
 });
 
+// Recursive glob so monitors/, keyboards/ and mice/ under src/data/products
+// all feed the same collection — `category` in the schema (the discriminated
+// union's tag) is what actually distinguishes them, not the folder.
+const productCollection = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: 'src/data/products' }),
+  schema: productSchema,
+});
+
 export const collections = {
   post: postCollection,
+  products: productCollection,
 };

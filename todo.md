@@ -12,11 +12,21 @@ Checklist triển khai cụ thể theo từng giai đoạn, bám theo kiến tr�
 
 ## Giai đoạn 1 — Data & Content Architecture (Tuần 1–2)
 
-- [ ] Định nghĩa schema `Product Data Node` bằng Zod (Identity, Category, Specifications, Tags, Use Cases, Editorial, Scoring, Commerce — theo mục 8 README)
-- [ ] Viết discriminated union schema riêng cho từng category: Monitor / Keyboard / Mouse
-- [ ] Thiết kế công thức Use-case Score (Programming, Gaming, Office, Design) cho từng category — công thức phải công khai, không black-box
-- [ ] Chốt nguồn ảnh sản phẩm (tự chụp / brand press kit / Creators API hotlink) — **(quyết định)**
-- [ ] Thu thập & nhập dữ liệu mẫu 10–15 sản phẩm/category để test pipeline (Monitor, Keyboard, Mouse)
+- [x] Định nghĩa schema `Product Data Node` bằng Zod — [src/lib/schema/product.ts](src/lib/schema/product.ts): `productSchema = z.discriminatedUnion('category', [monitor, keyboard, mouse])`, mỗi nhánh gồm Identity/Tags/UseCases/Editorial/Commerce dùng chung + `specifications` riêng theo category. Wired vào Content Collection `products` trong `src/content.config.ts` (đọc từ `src/data/products/{monitors,keyboards,mice}/*.md`). Đã build-test cả 2 chiều: data hợp lệ build qua, data sai field bị Zod chặn đúng với thông báo lỗi rõ ràng. **Lưu ý thiết kế:** `Scoring` không nằm trong schema này — để dành cho scoring engine tính toán (Giai đoạn 3), tránh 2 nguồn sự thật; `ID`/`Slug` của Identity dùng `id` do content collection tự sinh từ đường dẫn file, không lặp lại trong frontmatter
+- [x] Viết discriminated union schema riêng cho từng category — làm cùng lúc với mục Zod schema ở trên (không tách rời được): `monitorProductSchema` / `keyboardProductSchema` / `mouseProductSchema` trong [src/lib/schema/product.ts](src/lib/schema/product.ts)
+- [x] Thiết kế công thức Use-case Score (Programming, Gaming, Office, Design) cho từng category — 2 file công khai, tách rời rõ ràng theo mục 9 README (Raw Spec → Derived Metrics → Assessment → Context Score):
+  - [src/lib/scoring/deriveMetrics.ts](src/lib/scoring/deriveMetrics.ts): `deriveMonitorFactors`/`deriveKeyboardFactors`/`deriveMouseFactors` — chuyển spec thô thành factor 0–10 có tên rõ ràng (textClarity, screenArea, typingComfort, precision...)
+  - [src/lib/scoring/useCaseScore.ts](src/lib/scoring/useCaseScore.ts): `computeUseCaseScores(product)` — trọng số từng use-case export công khai dạng const (`MONITOR_WEIGHTS`/`KEYBOARD_WEIGHTS`/`MOUSE_WEIGHTS`), mỗi bộ trọng số cộng đúng 1.0, không có hệ số ẩn
+  - **Sửa lại quyết định trước đó:** `useCases` đã bỏ khỏi schema Zod (không nhập tay nữa) — README mục 9 nói rõ Use Case Score là *kết quả tính toán*, không phải data nhập tay. 3 fixture đã cập nhật theo (bỏ block `useCases:`)
+  - Đã verify bằng script chạy thật (không chỉ type-check): phát hiện + sửa 1 lỗi công thức (precision chuột dùng thang DPI gaming 20000 làm mouse productivity bị điểm quá thấp) trước khi chốt
+- [x] Chốt nguồn ảnh sản phẩm — **hotlink từ retailer (Amazon)**, không tự chụp. Khớp sẵn với affiliate Amazon Associates ở Giai đoạn 4, không cần pipeline lưu trữ/tải ảnh. Đã thêm field `images` vào schema ([src/lib/schema/product.ts](src/lib/schema/product.ts)): `{ url, alt, source }`, `source` mặc định `retailer-hotlink`, vẫn chừa `press-kit` cho trường hợp hiếm cần tự host ảnh brand. 3 fixture đã cập nhật theo, build/check sạch
+- [x] Thu thập & nhập dữ liệu mẫu — **15 sản phẩm thật** (5/category) từ data user research, map vào schema. `astro check` + `build` sạch, tất cả pass Zod validation.
+  - Monitors: Dell UltraSharp U2724DE, ASUS ProArt PA278CV, LG UltraGear 27GR83Q-B, BenQ RD280U, GIGABYTE M27Q Rev 2.0
+  - Keyboards: Keychron Q1 Max, Logitech MX Keys S, NuPhy Air75 V2, Wooting 60HE+, MoErgo Glove80
+  - Mice: Logitech MX Master 3S, Razer Viper V3 Pro, Logitech Lift Vertical, Keychron M3 Mini 4K, Apple Magic Mouse (USB-C)
+  - Đã thêm field `hasKvm` (monitor) + enum `IPS Black` vào schema vì đây là tín hiệu thật xuất hiện trong data
+  - **`scores` do user cung cấp bị bỏ** — theo kiến trúc đã chốt, điểm số tính từ `computeUseCaseScores()`, không nhập tay
+  - **Cần bạn review lại:** (1) `images` toàn bộ là placeholder placehold.co, chưa có ảnh thật — cần lấy URL ảnh thật từ từng trang Amazon; (2) 1 vài field không có trong data gốc (`backlighting`, `gripStyle`, `sensorType` phần lớn, ergonomics chi tiết) được điền theo kiến thức sản phẩm chung, đã đánh dấu bằng comment ở đầu mỗi file cần double-check; (3) **Wooting 60HE+ dùng chung URL Amazon với GIGABYTE M27Q** (nghi ngờ lỗi copy-paste trong data gốc) — cần link đúng
 
 ## Giai đoạn 2 — Core Product Experience (Tuần 2–4)
 
