@@ -36,6 +36,9 @@ export default defineConfig({
   // Native Fonts API: self-hosts + subsets + preloads Inter and generates
   // metric-adjusted fallbacks. Injected via <Font /> in Layout.astro and
   // consumed through the `--font-inter` CSS variable in CustomStyles.astro.
+  // JetBrains Mono is added for product specs (resolutions, refresh rates,
+  // wattages...) — numbers/units read more clearly in a tabular monospace
+  // face than in Inter; wired through `--font-jetbrains-mono` the same way.
   fonts: [
     {
       provider: fontProviders.fontsource(),
@@ -45,6 +48,15 @@ export default defineConfig({
       styles: ['normal'],
       subsets: ['latin'],
       fallbacks: ['sans-serif'],
+    },
+    {
+      provider: fontProviders.fontsource(),
+      name: 'JetBrains Mono',
+      cssVariable: '--font-jetbrains-mono',
+      weights: ['400 700'],
+      styles: ['normal'],
+      subsets: ['latin'],
+      fallbacks: ['monospace'],
     },
   ],
 

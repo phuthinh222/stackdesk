@@ -4,6 +4,8 @@ import { ANALYTICS } from 'astrowind:config';
 const id = ANALYTICS?.vendors?.googleAnalytics?.id ? String(ANALYTICS.vendors.googleAnalytics.id) : '';
 const partytown = !!ANALYTICS?.vendors?.googleAnalytics?.partytown;
 const scriptType = partytown ? 'text/partytown' : undefined;
+
+const hasPostHog = !!import.meta.env.PUBLIC_POSTHOG_KEY;
 ---
 
 {id && <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${id}`} type={scriptType} />}
@@ -19,3 +21,19 @@ const scriptType = partytown ? 'text/partytown' : undefined;
     window.gtag('config', d);
   }
 </script>
+
+{
+  /*
+    PostHog: bundled as a regular module script (not is:inline), so Astro/Vite
+    defers it automatically and it never blocks first paint / SEO rendering.
+    No-ops client-side if PUBLIC_POSTHOG_KEY isn't set (see src/utils/analytics.ts).
+  */
+}
+{
+  hasPostHog && (
+    <script>
+      import { initAnalytics } from '~/utils/analytics';
+      initAnalytics();
+    </script>
+  )
+}

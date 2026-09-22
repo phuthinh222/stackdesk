@@ -1,7 +1,12 @@
 ---
 // Font family is provided by Astro's native Fonts API (see `fonts` in
-// astro.config.ts and <Font /> in Layout.astro), exposed as `--font-inter`.
-// To switch typefaces, change the `fonts` entry and repoint `--aw-font-*` below.
+// astro.config.ts and <Font /> in Layout.astro), exposed as `--font-inter`
+// and `--font-jetbrains-mono`. To switch typefaces, change the `fonts`
+// entries and repoint `--aw-font-*` below.
+//
+// StackDesk interim palette (pending official brand/logo — see todo.md):
+// Indigo primary/secondary (trust, dev-tool feel) + Amber accent (CTA/score
+// highlights, also fixes the low dark-mode contrast the default purple had).
 ---
 
 <style is:inline>
@@ -9,10 +14,11 @@
     --aw-font-sans: var(--font-inter);
     --aw-font-serif: var(--font-inter);
     --aw-font-heading: var(--font-inter);
+    --aw-font-mono: var(--font-jetbrains-mono);
 
-    --aw-color-primary: rgb(1 97 239);
-    --aw-color-secondary: rgb(1 84 207);
-    --aw-color-accent: rgb(109 40 217);
+    --aw-color-primary: rgb(79 70 229);
+    --aw-color-secondary: rgb(67 56 202);
+    --aw-color-accent: rgb(245 158 11);
 
     --aw-color-text-heading: rgb(0 0 0);
     --aw-color-text-default: rgb(16 16 16);
@@ -30,10 +36,11 @@
     --aw-font-sans: var(--font-inter);
     --aw-font-serif: var(--font-inter);
     --aw-font-heading: var(--font-inter);
+    --aw-font-mono: var(--font-jetbrains-mono);
 
-    --aw-color-primary: rgb(1 97 239);
-    --aw-color-secondary: rgb(1 84 207);
-    --aw-color-accent: rgb(109 40 217);
+    --aw-color-primary: rgb(99 102 241);
+    --aw-color-secondary: rgb(129 140 248);
+    --aw-color-accent: rgb(245 158 11);
 
     --aw-color-text-heading: rgb(247, 248, 248);
     --aw-color-text-default: rgb(229 236 246);

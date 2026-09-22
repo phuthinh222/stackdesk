@@ -5,10 +5,10 @@ Checklist triển khai cụ thể theo từng giai đoạn, bám theo kiến tr�
 ## Giai đoạn 0 — Nền tảng & Setup (Tuần 1)
 
 - [x] Chốt base project / tech stack — **Astro + AstroWind** (islands cho Comparison Engine/Smart Finder/AI Advisor UI, server endpoints cho AI Advisor backend)
-- [ ] Khởi tạo repo (git init nếu chưa có), cấu trúc thư mục dự án
-- [ ] Đăng ký domain + chọn hosting (Vercel / Netlify / Cloudflare Pages)
-- [ ] Setup công cụ Analytics (Plausible / Umami Cloud / PostHog Cloud) — **(quyết định, lưu ý nếu cần custom event thì ưu tiên PostHog)**
-- [ ] Dựng design system tạm thời (màu, font, layout cơ bản) — dùng trước khi có logo/tone of voice chính thức, không chặn tiến độ
+- [x] Khởi tạo repo, cấu trúc thư mục dự án — scaffold bằng `npm create astro@latest . -- --template onwidget/astrowind` (không tự tạo file tay), `git init`, commit đầu tiên, push lên `origin/dev` tại [github.com/phuthinh222/stackdesk](https://github.com/phuthinh222/stackdesk) (nhánh `dev`, chưa có `main`)
+- [x] Đăng ký domain **stackdesk24.site** + kết nối hosting **Vercel** — đã đăng ký domain và link project trên Vercel dashboard. Lưu ý: `vercel.json` đã có sẵn từ template, `astro.config.ts` đang ở `output: 'static'` — khi làm AI Advisor (Giai đoạn 3) cần chuyển route `/api/*` sang `server`/`hybrid` với `@astrojs/vercel` adapter
+- [x] Setup công cụ Analytics — **PostHog Cloud**: đã cài `posthog-js`, wiring xong trong `src/utils/analytics.ts` (`initAnalytics()` + `trackEvent()` sẵn cho Compare/Finder/AI Advisor/`/go/...` sau này) và `src/components/common/Analytics.astro` (chỉ nhúng script khi có `PUBLIC_POSTHOG_KEY`, dạng module deferred — đã build-test cả 2 trường hợp có/không key). **Còn lại việc của bạn:** tạo project trên [posthog.com](https://posthog.com) (chọn US hoặc EU Cloud), copy API key vào `.env` (copy từ `.env.example`) cho local, và thêm `PUBLIC_POSTHOG_KEY`/`PUBLIC_POSTHOG_HOST` vào Environment Variables trên Vercel dashboard cho production
+- [x] Dựng design system tạm thời — đổi theo đúng quy trình chính thức của AstroWind (`.agents/skills/styling.md`): màu primary/secondary → **Indigo**, accent → **Amber** trong `src/components/CustomStyles.astro` (light + dark); thêm font **JetBrains Mono** cho spec sản phẩm qua Astro Fonts API (`astro.config.ts` + `Layout.astro` + `--font-mono` trong `tailwind.css`), giữ **Inter** cho sans/heading. Đã build-test: cả 2 font tự host đúng, màu áp dụng đúng cả 2 theme. Layout cơ bản (spacing/grid) giữ nguyên mặc định AstroWind — chưa cần chỉnh vì chưa có trang sản phẩm thực (Giai đoạn 1-2)
 
 ## Giai đoạn 1 — Data & Content Architecture (Tuần 1–2)
 
@@ -63,7 +63,6 @@ Theo mục 13 README (Kênh Nội dung & Mạng Xã hội):
 
 ## Việc mở — chưa chốt (theo dõi riêng)
 
-- [ ] Base project / tech stack
 - [ ] Công cụ Analytics
 - [ ] Nguồn ảnh sản phẩm
 - [ ] Redirect `/go/...` hay chỉ `onClick`
